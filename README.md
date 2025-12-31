@@ -4,6 +4,15 @@
 
 本插件灵感来源于 Yakit。想利用类似内涵表达式的方式让 Burp 跟方便。支持在 Repeater 和 Intruder 中使用 `bfunc{}` 模板表达式进行实时负载生成。
 
+## 更新日志
+
+- V1.0.1
+
+  1. 加入unicode_encode(map) 传入json自动进行 json 的 unicode 编码
+  2. 加入函数提示功能，更像 yakit。
+
+![image](assets/image-20251231133901-rg02dxv.png)
+
 ## 用法
 
 ### 基本用法
@@ -56,6 +65,8 @@ url_encode(str)        - URL 编码（保留字母数字）
 url_encode_all(str)    - URL 编码（全部字符）
 url_decode(str)        - URL 解码
 unicode_encode(str)    - Unicode 编码 (\uXXXX)
+unicode_encode(map)    - Unicode 编码 Map
+  示例: unicode_encode({"aaa":"bbb"}) → {"\u0061...":"\u0062..."}
 unicode_decode(str)    - Unicode 解码
 gzip_encode(str)       - Gzip 压缩
 gzip_decode(str)       - Gzip 解压
@@ -153,5 +164,7 @@ bpp://Vm5eqFzP27UeAxCD9bJ6o2YVzYfg7wKr1Jde1IrLa743LbZ0JRAG6UC6crnlLpqbREQugRnvod
 ```
 
 然后把链接丢给朋友 右键 -> 插件 -> 从剪切板粘贴请求
+
+**注意：因为使用的是 MVEL 表达式引擎，传过来的链接不一定可信，一定要检查后再预览或者发送！！！** 
 
 ‍
