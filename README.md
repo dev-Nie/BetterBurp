@@ -2,16 +2,9 @@
 
 ## 介绍
 
-本插件灵感来源于 Yakit。想利用类似内涵表达式的方式让 Burp 跟方便。支持在 Repeater 和 Intruder 中使用 `bfunc{}` 模板表达式进行实时负载生成。
+本插件灵感来源于 Yakit。想利用类似内涵表达式的方式让 Burp 跟方便。支持在 Repeater 和 Intruder 中使用 `bfunc{}` 模板表达式进行实时负载生成。可以在 BetterBurp 页面导入 jar 包，和添加自定义方法。
 
-## 更新日志
-
-- V1.0.1
-
-  1. 加入unicode_encode(map) 传入json自动进行 json 的 unicode 编码
-  2. 加入函数提示功能，更像 yakit。
-
-![image](assets/image-20251231133901-rg02dxv.png)
+**注意：因为使用的是 GROOVY 表达式引擎，导入别人的链接或者库不一定可信，请仔细鉴别，一定要检查后再预览或者发送！！！** 
 
 ## 用法
 
@@ -33,7 +26,7 @@ Burp在文件上传时候直接右键导入的文件如果文件是二进制的�
 
 ![image](assets/image-20251229000216-tslg48m.png)
 
-构造路径穿越zip包。
+构造路径穿越zip包（现在已经从`{}`​转换为`[]`）。
 
 ![image](assets/image-20251229000618-thpm797.png)
 
@@ -49,7 +42,7 @@ Burp在文件上传时候直接右键导入的文件如果文件是二进制的�
 
 ```plaintext
 【语法说明】
-使用 MVEL 表达式引擎，支持：
+使用 Groovy 表达式引擎，支持：
   字符串: "hello" 或 'hello'
   数字: 123, 45.67
   字符串拼接: "a" + "b" → "ab"
@@ -66,16 +59,16 @@ url_encode_all(str)    - URL 编码（全部字符）
 url_decode(str)        - URL 解码
 unicode_encode(str)    - Unicode 编码 (\uXXXX)
 unicode_encode(map)    - Unicode 编码 Map
-  示例: unicode_encode({"aaa":"bbb"}) → {"\u0061...":"\u0062..."}
+  示例: unicode_encode(["aaa":"bbb"]) → {"\u0061...":"\u0062..."}
 unicode_decode(str)    - Unicode 解码
 gzip_encode(str)       - Gzip 压缩
 gzip_decode(str)       - Gzip 解压
 zlib_encode(str)       - Zlib 压缩
 zlib_decode(str)       - Zlib 解压
 zip(map)               - 创建 ZIP 文件
-  示例: zip({"test.txt":"hello", "test.bin":base64_decode("xxxx")})
-  示例: zip({"test.txt":file_read("/home/1.txt")})
-  路径穿越: zip({"../../../.ssh/id_rsa":"key"})
+  示例: zip(["test.txt":"hello", "test.bin":base64_decode("xxxx")])
+  示例: zip(["test.txt":file_read("/home/1.txt")])
+  路径穿越: zip(["../../../.ssh/id_rsa":"key"])
 html_encode(str)       - HTML 实体编码（十进制）
 html_encode_16(str)    - HTML 实体编码（十六进制）
 html_decode(str)       - HTML 实体解码
@@ -136,8 +129,8 @@ webshell_suo5(type) - 生成 Suo5 代理 webshell
 jwt_encode(header, payload, secret) - 生成 JWT
   支持算法: HS256, HS384, HS512, none
   示例: jwt_encode(
-    {"alg":"HS256","typ":"JWT"},
-    {"sub":"123","name":"test"},
+    ["alg":"HS256","typ":"JWT"],
+    ["sub":"123","name":"test"],
     "secret-key"
   )
 
@@ -148,7 +141,7 @@ bfunc{"prefix_" + random_str(8, 12) + "_suffix"}
 bfunc{url_encode(file_read("/path/to/file"))}
 bfunc{100 + 200}  → 300
 bfunc{time() + 3600}  → 当前时间+1小时
-bfunc{{"key":"value"}}  → JSON 格式保留
+bfunc{["key":"value"]}  → JSON 格式保留
 ```
 
 ## 其他功能
@@ -165,6 +158,26 @@ bpp://Vm5eqFzP27UeAxCD9bJ6o2YVzYfg7wKr1Jde1IrLa743LbZ0JRAG6UC6crnlLpqbREQugRnvod
 
 然后把链接丢给朋友 右键 -> 插件 -> 从剪切板粘贴请求
 
-**注意：因为使用的是 MVEL 表达式引擎，传过来的链接不一定可信，一定要检查后再预览或者发送！！！** 
+**注意：因为使用的是 GROOVY 表达式引擎，传过来的链接不一定可信，一定要检查后再预览或者发送！！！** 
 
 ‍
+
+## 更新日志
+
+- V1.1.0
+
+  1. 切换到 groovy 引擎（burp自带的是 jre ，使用 groovy 来做 java 语法支持）。
+  2. 加入用户自定义方法，`bfunc{}`​ 内可以直接调用，如 `bfunc{MyClass.myMethod("test")}`​，自带默认类 `BfuncDefault` 下所有方法都可以不需要加类名调用。
+  3. 添加右键菜单直接导入。
+  4. 修复换行问题。
+
+  ![image](assets/image-20260110163052-dalg2qe.png)
+
+‍
+
+- V1.0.1
+
+  1. 加入unicode_encode(map) 传入json自动进行 json 的 unicode 编码
+  2. 加入函数提示功能，更像 yakit。
+
+  ![image](assets/image-20260110163101-yqylq6w.png)
